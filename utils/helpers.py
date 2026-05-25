@@ -14,12 +14,21 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 
+import time
+
 def get_poster_path(movie_id):
-	r = requests.get(f"{c.MOVIE_DB_URL}/movie/{movie_id}")
-	soup = BeautifulSoup(r.content, features = 'html.parser')
-	for item in soup.findAll('meta'):
-		if str(item).split()[1].endswith('.jpg"'):
-			return (str(item).split()[1].strip('content=').strip('"'))
+	try:
+		r = requests.get(f"{c.MOVIE_DB_URL}/movie/{movie_id}", timeout=10)
+		if r.status_code != 200:
+			return None
+		soup = BeautifulSoup(r.content, features = 'html.parser')
+		for item in soup.findAll('meta'):
+			if str(item).split()[1].endswith('.jpg"'):
+				return (str(item).split()[1].strip('content=').strip('"'))
+	except requests.exceptions.RequestException:
+		time.sleep(1)
+		return None
+	return None
 
 
 def get_director(movie_id, credits):
@@ -82,7 +91,7 @@ def connect_db():
 	connection = pymysql.connect(host=c.HOST, user=c.USERNAME, password=c.PASSWORD, port=int(c.PORT), ssl={'ssl':{}})
 	cursor = connection.cursor(pymysql.cursors.DictCursor)
 	#cursor.execute("""USE %s""", (c.DB_NAME,))
-	cursor.execute("""USE movies_DB""")
+	cursor.execute(f"USE {c.DB_NAME}")
 	return cursor
 
 @st.cache
@@ -183,7 +192,7 @@ def get_usernames():
 def add_new_user(new_username, new_password):
 	connection = pymysql.connect(host=c.HOST, user=c.USERNAME, password=c.PASSWORD, port=int(c.PORT), ssl={'ssl':{}})
 	cursor = connection.cursor(pymysql.cursors.DictCursor)
-	cursor.execute("""USE movies_DB""")
+	cursor.execute(f"USE {c.DB_NAME}")
 	try:
 		print(new_username)
 		print(new_password)
@@ -319,7 +328,7 @@ def testing_collaborative(selected_genre, years, images_per_page, offset, user_i
 			# st.write(components)
 			connection = pymysql.connect(host=c.HOST, user=c.USERNAME, password=c.PASSWORD, port=int(c.PORT), ssl={'ssl':{}})
 			cursor = connection.cursor(pymysql.cursors.DictCursor)
-			cursor.execute("""USE movies_DB""")
+			cursor.execute(f"USE {c.DB_NAME}")
 
 			for  comp in components:
 				if components[comp]['slider'] > 0:
