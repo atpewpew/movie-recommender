@@ -7,10 +7,10 @@ import pandas as pd
 
 def populate(connection, cursor):
 
-  # READ MOVIES FROM CSV AND RETAIN THE 30% MOST VOTED
+  # READ MOVIES FROM CSV AND RETAIN A SMALL BATCH FOR FAST DEPLOYMENT TESTING
   movies = pd.read_csv(c.DATA_PATH + 'movies_metadata.csv', low_memory = False)
-  most_voted = movies['vote_count'].quantile(0.70)
-  most_voted_movies = movies.loc[movies['vote_count'] >= most_voted]
+  most_voted = movies['vote_count'].quantile(0.99) # Only top 1% to make it lightning fast
+  most_voted_movies = movies.loc[movies['vote_count'] >= most_voted].head(50) # Just 50 movies!
 
   # READ ACTORS, DIRECTOR AND KEYWORDS FROM CSV
   credits = pd.read_csv(c.DATA_PATH + 'credits.csv', low_memory = False)
@@ -110,7 +110,11 @@ def add_scores(connection, cursor):
   vote_average = [float(movie['vote_average']) for movie in movies]
 
   scores = h.weighted_rating(vote_counts, vote_average)
-  cursor.execute("""ALTER TABLE movies ADD scores DECIMAL(3,2) NOT NULL""")
+  try:
+    cursor.execute("""ALTER TABLE movies ADD scores DECIMAL(3,2) NOT NULL""")
+  except pymysql.err.OperationalError as e:
+    if e.args[0] != 1060: # 1060 is Duplicate column name error
+      raise
 
   for idx, score in zip(ids,scores):
     cursor.execute("""UPDATE movies SET scores = %s WHERE id = %s""", (score,idx))

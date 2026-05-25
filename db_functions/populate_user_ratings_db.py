@@ -6,7 +6,7 @@ import pandas as pd
 def populate(connection, cursor):
 
     # Read movies from CSV file
-    user_ratings = pd.read_csv(c.DATA_PATH + 'ratings_small.csv', low_memory = False)
+    user_ratings = pd.read_csv(c.DATA_PATH + 'ratings_small.csv', low_memory = False).head(50) # Only process 50 ratings for fast testing!
     links = pd.read_csv(c.DATA_PATH + 'links.csv', low_memory = False)
 
     count = 0

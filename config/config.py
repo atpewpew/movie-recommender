@@ -5,7 +5,7 @@ import streamlit as st
 current_dir = os.getcwd()
 DB_FILE = f'{current_dir}/movies_db2.db'
 
-DB_NAME = "movies_DB"
+DB_NAME = "defaultdb"
 
 # Safely load database credentials from Streamlit Secrets
 try:
