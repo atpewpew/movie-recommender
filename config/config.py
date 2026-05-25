@@ -12,13 +12,13 @@ try:
     USERNAME = st.secrets["DB_USERNAME"]
     PASSWORD = st.secrets["DB_PASSWORD"]
     HOST = st.secrets["DB_HOST"]
+    PORT = st.secrets.get("DB_PORT", 3306)
 except (FileNotFoundError, KeyError, Exception):
     # Fallback placeholders for local testing if secrets aren't set
     USERNAME = "root"
     PASSWORD = "password"
     HOST = "localhost"
-
-PORT= "3306"
+    PORT = 3306
 
 MOVIES_PER_ROW = 5
 DATA_PATH = f"{current_dir}/data/"

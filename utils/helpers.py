@@ -79,7 +79,7 @@ def connect_db():
 	# cursor = connection.cursor()
 
 	# MYSQL
-	connection = pymysql.connect(host=c.HOST, user=c.USERNAME, password=c.PASSWORD)
+	connection = pymysql.connect(host=c.HOST, user=c.USERNAME, password=c.PASSWORD, port=int(c.PORT), ssl={'ssl':{}})
 	cursor = connection.cursor(pymysql.cursors.DictCursor)
 	#cursor.execute("""USE %s""", (c.DB_NAME,))
 	cursor.execute("""USE movies_DB""")
@@ -181,7 +181,7 @@ def get_usernames():
 
 
 def add_new_user(new_username, new_password):
-	connection = pymysql.connect(host=c.HOST, user=c.USERNAME, password=c.PASSWORD)
+	connection = pymysql.connect(host=c.HOST, user=c.USERNAME, password=c.PASSWORD, port=int(c.PORT), ssl={'ssl':{}})
 	cursor = connection.cursor(pymysql.cursors.DictCursor)
 	cursor.execute("""USE movies_DB""")
 	try:
@@ -317,7 +317,7 @@ def testing_collaborative(selected_genre, years, images_per_page, offset, user_i
 			components = display_movies(ids, links, titles, scores, ratings)
 
 			# st.write(components)
-			connection = pymysql.connect(host=c.HOST, user=c.USERNAME, password=c.PASSWORD)
+			connection = pymysql.connect(host=c.HOST, user=c.USERNAME, password=c.PASSWORD, port=int(c.PORT), ssl={'ssl':{}})
 			cursor = connection.cursor(pymysql.cursors.DictCursor)
 			cursor.execute("""USE movies_DB""")
 

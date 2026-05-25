@@ -12,7 +12,7 @@ tf.disable_v2_behavior()
 tf.logging.set_verbosity(tf.logging.ERROR)
 
 
-connection = pymysql.connect(host=c.HOST, user=c.USERNAME, password=c.PASSWORD)
+connection = pymysql.connect(host=c.HOST, user=c.USERNAME, password=c.PASSWORD, port=int(c.PORT), ssl={'ssl':{}})
 cursor = connection.cursor(pymysql.cursors.DictCursor)
 #cursor.execute("""USE %s""", (c.DB_NAME,))
 cursor.execute("""USE movies_DB""")
