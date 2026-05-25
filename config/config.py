@@ -1,15 +1,23 @@
-
-from config import my_secrets as s
 import os
+import streamlit as st
 
 # DEPRECATED: THIS WAS NECESSARY USING SQLITE3
 current_dir = os.getcwd()
 DB_FILE = f'{current_dir}/movies_db2.db'
 
 DB_NAME = "movies_DB"
-USERNAME = s.USERNAME
-PASSWORD= s.PASSWORD
-HOST= s.HOST
+
+# Safely load database credentials from Streamlit Secrets
+try:
+    USERNAME = st.secrets["DB_USERNAME"]
+    PASSWORD = st.secrets["DB_PASSWORD"]
+    HOST = st.secrets["DB_HOST"]
+except (FileNotFoundError, KeyError, Exception):
+    # Fallback placeholders for local testing if secrets aren't set
+    USERNAME = "root"
+    PASSWORD = "password"
+    HOST = "localhost"
+
 PORT= "3306"
 
 MOVIES_PER_ROW = 5
